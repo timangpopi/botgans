@@ -253,6 +253,7 @@ async def resize_photo(photo):
 @register(outgoing=True, pattern="^.stkrinfo$")
 async def get_pack_info(event):
     if not event.text[0].isalpha() and event.text[0] not in ("/", "#", "@", "!"):
+
         if not event.is_reply:
             await bot.update_message(event, PACKINFO_HELP)
             return
