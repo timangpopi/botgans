@@ -23,26 +23,49 @@ async def locks(event):
         adduser = None
         cpin = None
         changeinfo = None
-        if "msg" in input_str:
+        if input_str is "msg":
             msg = True
-        if "media" in input_str:
+            what = "messages"
+        if input_str is "media":
             media = True
-        if "sticker" in input_str:
+            what = "media"
+        if input_str is "sticker":
             sticker = True
-        if "gif" in input_str:
+            what = "stickers"
+        if input_str is "gif":
             gif = True
-        if "game" in input_str:
+            what = "GIFs"
+        if input_str is "game":
             gamee = True
-        if "inline" in input_str:
+            what = "games"
+        if input_str is "inline":
             ainline = True
-        if "poll" in input_str:
+            what = "inline bots"
+        if input_str is "poll":
             gpoll = True
-        if "invite" in input_str:
+            what = "polls"
+        if input_str is "invite":
             adduser = True
-        if "pin" in input_str:
+            what = "invites"
+        if input_str is "pin":
             cpin = True
-        if "info" in input_str:
+            what = "pins"
+        if input_str is "info":
             changeinfo = True
+            what = "chat info"
+        if input_str is "all":
+            msg = True
+            media = True
+            sticker = True
+            gif = True
+            gamee = True
+            ainline = True
+            gpoll = True
+            adduser = True
+            cpin = True
+            changeinfo = True
+            what = "everything"
+            
         banned_rights=ChatBannedRights(
             until_date=None,
             send_messages=msg,
@@ -61,10 +84,11 @@ async def locks(event):
                 peer=peer_id,
                 banned_rights=banned_rights
             ))
-        except Exception as e:
-            await event.edit(str(e))
+        except:
+            await event.edit("`Do I have proper rights fot that ??`")
         else:
-            await sleep(5)
+            await event.edit(f"`Locked {what} for this chat !!`")
+            await sleep(3)
             await event.delete()
 
 
@@ -84,26 +108,49 @@ async def rem_locks(event):
         adduser = None
         cpin = None
         changeinfo = None
-        if "msg" in input_str:
+        if input_str is "msg":
             msg = False
-        if "media" in input_str:
+            what = "messages"
+        if input_str is "media":
             media = False
-        if "sticker" in input_str:
+            what = "media"
+        if input_str is "sticker":
             sticker = False
-        if "gif" in input_str:
+            what = "stickers"
+        if input_str is "gif":
             gif = False
-        if "game" in input_str:
+            what = "GIFs"
+        if input_str is "game":
             gamee = False
-        if "inline" in input_str:
+            what = "games"
+        if input_str is "inline":
             ainline = False
-        if "poll" in input_str:
+            what = "inline bots"
+        if input_str is "poll":
             gpoll = False
-        if "invite" in input_str:
+            what = "polls"
+        if input_str is "invite":
             adduser = False
-        if "pin" in input_str:
+            what = "invites"
+        if input_str is "pin":
             cpin = False
-        if "info" in input_str:
+            what = "pins"
+        if input_str is "info":
             changeinfo = False
+            what = "chat info"
+        if input_str is "all":
+            msg = False
+            media = False
+            sticker = False
+            gif = False
+            gamee = False
+            ainline = False
+            gpoll = False
+            adduser = False
+            cpin = False
+            changeinfo = False
+            what = "everything"
+            
         banned_rights=ChatBannedRights(
             until_date=None,
             send_messages=msg,
@@ -122,16 +169,17 @@ async def rem_locks(event):
                 peer=peer_id,
                 banned_rights=banned_rights
             ))
-        except Exception as e:
-            await event.edit(str(e))
+        except:
+            await event.edit("`Do I have proper rights fot that ??`")
         else:
-            await sleep(5)
+            await event.edit(f"`Unlocked {what} for this chat !!`")
+            await sleep(3)
             await event.delete()
 
 CMD_HELP.update({
-    "locks": ".lock <type(s)> or .unlock <type(s)>\
+    "locks": ".lock <all (or) type(s)> or .unlock <all (or) type(s)>\
 \nUsage: Allows you to lock/unlock some common message types in the chat.\
 [NOTE: Requires proper admin rights in the chat !!]\
 \n\nAvailable message types to lock/unlock are: \
-\n`msg, media, sticker, gif, game, inline, poll, invite, pin, info`\
+\n`all, msg, media, sticker, gif, game, inline, poll, invite, pin, info`\
 "})
