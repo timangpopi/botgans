@@ -1,6 +1,6 @@
 # Copyright (C) 2019 The Raphielscape Company LLC.
 #
-# Licensed under the Raphielscape Public License, Version 1.b (the "License");
+# Licensed under the Raphielscape Public License, Version 1.c (the "License");
 # you may not use this file except in compliance with the License.
 #
 """ Userbot module containing commands related to android"""
@@ -14,7 +14,6 @@ from userbot.events import register, errors_handler
 
 
 GITHUB = 'https://github.com'
-MAGISK_REPO = f'{GITHUB}/topjohnwu/Magisk/releases'
 DEVICES_DATA = 'https://raw.githubusercontent.com/androidtrackers/' \
                'certified-android-devices/master/devices.json'
 
@@ -25,24 +24,14 @@ async def magisk(request):
     """ magisk latest releases """
     if not request.text[0].isalpha(
     ) and request.text[0] not in ("/", "#", "@", "!"):
-        page = BeautifulSoup(get(MAGISK_REPO).content, 'lxml')
-        links = '\n'.join([i['href'] for i in page.findAll('a')])
+        url = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/master/'
         releases = 'Latest Magisk Releases:\n'
-        try:
-            latest_apk = re.findall(r'/.*MagiskManager-v.*apk', links)[0]
-            releases += f'[{latest_apk.split("/")[-1]}]({GITHUB}{latest_apk})\n'
-        except IndexError:
-            releases += "`Can't find latest APK !!`"
-        try:
-            latest_zip = re.findall(r'/.*Magisk-v.*zip', links)[0]
-            releases += f'[{latest_zip.split("/")[-1]}]({GITHUB}{latest_zip})\n'
-        except IndexError:
-            releases += "`Can't find latest ZIP !!`"
-        try:
-            latest_uninstaller = re.findall(r'/.*Magisk-uninstaller-.*zip', links)[0]
-            releases += f'[{latest_uninstaller.split("/")[-1]}]({GITHUB}{latest_uninstaller})\n'
-        except IndexError:
-            releases += "`Can't find latest uninstaller !!`"
+        for variant in ['stable', 'beta', 'canary_builds/canary']:
+            data = get(url + variant + '.json').json()
+            name = variant.split('_')[0].capitalize()
+            releases += f'{name}: [ZIP v{data["magisk"]["version"]}]({data["magisk"]["link"]}) | ' \
+                        f'[APK v{data["app"]["version"]}]({data["app"]["link"]}) | ' \
+                        f'[Uninstaller]({data["uninstaller"]["link"]})\n'
         await request.edit(releases)
 
 
@@ -64,7 +53,7 @@ async def device_info(request):
         found = [i for i in get(DEVICES_DATA).json()
                  if i["device"] == device or i["model"] == device]
         if found:
-            reply = f'Search results for {device}:\n'
+            reply = f'Search results for {device}:\n\n'
             for item in found:
                 brand = item['brand']
                 name = item['name']
@@ -95,10 +84,12 @@ async def codename_info(request):
         else:
             await request.edit("`Usage: .codename <brand> <device>`")
             return
-        found = [i for i in get(DEVICES_DATA).json()
-                 if i["brand"].lower() == brand and device in i["name"].lower()]
+        found = [i for i in get(DEVICES_DATA).json(
+        ) if i["brand"].lower() == brand and device in i["name"].lower()]
+        if len(found) > 8:
+            found = found[:8]
         if found:
-            reply = f'Search results for {brand.capitalize()} {device.capitalize()}:\n'
+            reply = f'Search results for {brand.capitalize()} {device.capitalize()}:\n\n'
             for item in found:
                 brand = item['brand']
                 name = item['name']
@@ -130,19 +121,23 @@ async def devices_specifications(request):
             await request.edit("`Usage: .specs <brand> <device>`")
             return
         all_brands = BeautifulSoup(
-            get('https://www.devicespecifications.com/en/brand-more').content, 'lxml') \
-            .find('div', {'class': 'brand-listing-container-news'}).findAll('a')
+            get('https://www.devicespecifications.com/en/brand-more').content,
+            'lxml').find('div',
+                         {'class': 'brand-listing-container-news'}).findAll('a')
         brand_page_url = None
         try:
-            brand_page_url = [i['href'] for i in all_brands if brand == i.text.strip().lower()][0]
+            brand_page_url = [i['href']
+                              for i in all_brands if brand == i.text.strip().lower()][0]
         except IndexError:
             await request.edit(f'`{brand} is unknown brand!`')
         devices = BeautifulSoup(get(brand_page_url).content, 'lxml') \
             .findAll('div', {'class': 'model-listing-container-80'})
         device_page_url = None
         try:
-            device_page_url = [i.a['href'] for i in BeautifulSoup(str(devices), 'lxml')
-                               .findAll('h3') if device in i.text.strip().lower()]
+            device_page_url = [
+                i.a['href'] for i in BeautifulSoup(
+                    str(devices),
+                    'lxml') .findAll('h3') if device in i.text.strip().lower()]
         except IndexError:
             await request.edit(f"`can't find {device}!`")
         if len(device_page_url) > 2:
@@ -150,7 +145,7 @@ async def devices_specifications(request):
         reply = ''
         for url in device_page_url:
             info = BeautifulSoup(get(url).content, 'lxml')
-            reply = '\n' + info.title.text.split('-')[0].strip() + '\n'
+            reply = '\n' + info.title.text.split('-')[0].strip() + '\n\n'
             info = info.find('div', {'id': 'model-brief-specifications'})
             specifications = re.findall(r'<b>.*?<br/>', str(info))
             for item in specifications:
@@ -193,17 +188,14 @@ async def twrp(request):
         await request.edit(reply)
 
 CMD_HELP.update({
-    "magisk": "Get latest Magisk releases"
-})
-CMD_HELP.update({
-    "device": ".device <codename>\nUsage: Get info about android device codename or model."
-})
-CMD_HELP.update({
-    "codename": ".codename <brand> <device>\nUsage: Search for android device codename."
-})
-CMD_HELP.update({
-    "specs": ".specs <brand> <device>\nUsage: Get device specifications info."
-})
-CMD_HELP.update({
-    "twrp": ".twrp <codename>\nUsage: Get latest twrp download for android device."
+    "android": ".magisk\
+\nGet latest Magisk releases\
+\n\n.device <codename>\
+\nUsage: Get info about android device codename or model.\
+\n\n.codename <brand> <device>\
+\nUsage: Search for android device codename.\
+\n\n.specs <brand> <device>\
+\nUsage: Get device specifications info.\
+\n\n.twrp <codename>\
+\nUsage: Get latest twrp download for android device."
 })
