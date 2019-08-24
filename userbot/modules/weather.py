@@ -41,7 +41,7 @@ async def get_weather(weather):
         return
 
     if len(OWM_API) < 1:
-        await weather.edit("Get an API key from https://openweathermap.org/ first.")
+        await weather.edit("`Get an API key from` https://openweathermap.org/ `first.`")
         return
 
     APPID = OWM_API
@@ -49,7 +49,7 @@ async def get_weather(weather):
     if not weather.pattern_match.group(1):
         CITY = DEFCITY
         if not CITY:
-            await weather.edit("Please specify a city or set one as default.")
+            await weather.edit("`Please specify a city or set one as default.`")
             return
     else:
         CITY = weather.pattern_match.group(1)
@@ -67,7 +67,7 @@ async def get_weather(weather):
             try:
                 countrycode = timezone_countries[f'{country}']
             except KeyError:
-                await weather.edit("Invalid country.")
+                await weather.edit("`Invalid country.`")
                 return
             CITY = newcity[0].strip() + "," + countrycode.strip()
 
@@ -76,7 +76,7 @@ async def get_weather(weather):
     result = json.loads(request.text)
 
     if request.status_code != 200:
-        await weather.edit(f"{result['message']}")
+        await weather.edit(f"`Invalid country.`")
         return
 
     cityname = result['name']
@@ -137,7 +137,7 @@ async def set_default_city(city):
         return
 
     if len(OWM_API) < 1:
-        await city.edit("Get an API key from https://openweathermap.org/ first.")
+        await city.edit("`Get an API key from` https://openweathermap.org/ `first.`")
         return
 
     global DEFCITY
@@ -146,7 +146,7 @@ async def set_default_city(city):
     if not city.pattern_match.group(1):
         CITY = DEFCITY
         if not CITY:
-            await city.edit("Please specify a city to set one as default.")
+            await city.edit("`Please specify a city to set one as default.`")
             return
     else:
         CITY = city.pattern_match.group(1)
@@ -164,7 +164,7 @@ async def set_default_city(city):
             try:
                 countrycode = timezone_countries[f'{country}']
             except KeyError:
-                await city.edit("Invalid country.")
+                await city.edit("`Invalid country.`")
                 return
             CITY = newcity[0].strip() + "," + countrycode.strip()
 
@@ -173,7 +173,7 @@ async def set_default_city(city):
     result = json.loads(request.text)
 
     if request.status_code != 200:
-        await city.edit(f"{result['message']}")
+        await city.edit(f"`Invalid country.`")
         return
 
     DEFCITY = CITY
@@ -182,7 +182,7 @@ async def set_default_city(city):
 
     fullc_n = c_n[f"{country}"]
 
-    await city.edit(f"Set default city as {cityname}, {fullc_n}.")
+    await city.edit(f"`Set default city as {cityname}, {fullc_n}.`")
 
 
 CMD_HELP.update({
