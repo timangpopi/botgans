@@ -27,6 +27,7 @@ async def randomise(items):
         index = randint(1, len(itemo) - 1)
         await items.edit("**Query: **\n`" + items.text[8:] + "`\n**Output: **\n`" + itemo[index] + "`")
 
+
 @register(outgoing=True, pattern="^.sleep( [0-9]+)?$")
 @errors_handler
 async def sleepybot(time):
@@ -60,6 +61,7 @@ async def killdabot(event):
                 "Bot shut down")
         await event.client.disconnect()
 
+
 @register(outgoing=True, pattern="^.restart$")
 @errors_handler
 async def killdabot(event):
@@ -76,6 +78,7 @@ async def killdabot(event):
         # Shut the existing one down
         exit()
 
+
 @register(outgoing=True, pattern="^.community$")
 @errors_handler
 async def bot_community(community):
@@ -85,6 +88,7 @@ async def bot_community(community):
                              "\nDo note that Paperplane Extended is an unoficial fork of their "\
                              "Paperplane project and it may get limited or no support for bugs.")
 
+
 @register(outgoing=True, pattern="^.support$")
 @errors_handler
 async def bot_support(wannahelp):
@@ -92,11 +96,13 @@ async def bot_support(wannahelp):
     if not wannahelp.text[0].isalpha() and wannahelp.text[0] not in ("/", "#", "@", "!"):
         await wannahelp.edit("Join the Paperplane Extended Channel: @PaperplaneExtended")
 
+
 @register(outgoing=True, pattern="^.creator$")
 @errors_handler
 async def creator(e):
     if not e.text[0].isalpha() and e.text[0] not in ("/", "#", "@", "!"):
         await e.edit("[AvinashReddy3108](https://t.me/AvinashReddy3108)")
+
 
 @register(outgoing=True, pattern="^.readme$")
 @errors_handler
@@ -108,9 +114,8 @@ async def reedme(e):
                      "\n[Setup Guide - Google Drive](https://telegra.ph/How-To-Setup-GDrive-07-27)"\
                      "\n[Setup Guide - LastFM Module](https://telegra.ph/How-to-set-up-LastFM-module-for-Paperplane-userbot-08-10)")
 
-#
+
 # Copyright (c) Gegham Zakaryan | 2019
-#
 @register(outgoing=True, pattern="^.repeat (.*)")
 @errors_handler
 async def repeat(rep):
@@ -126,6 +131,7 @@ async def repeat(rep):
 
         await rep.edit(replyText)
 
+
 @register(outgoing=True, pattern="^.repo$")
 @errors_handler
 async def repo_is_here(wannasee):
@@ -133,44 +139,87 @@ async def repo_is_here(wannasee):
     if not wannasee.text[0].isalpha() and wannasee.text[0] not in ("/", "#", "@", "!"):
         await wannasee.edit("Click [here](https://github.com/AvinashReddy3108/PaperplaneExtended) to open Paperplane Extended's GitHub page.")
 
+@register(outgoing=True, pattern="^.json$")
+@errors_handler
+async def json(event):
+    if not event.text[0].isalpha() and event.text[0] not in ("/", "#", "@", "!"):
+        if event.fwd_from:
+            return
+        the_real_message = None
+        reply_to_id = None
+        if event.reply_to_msg_id:
+            previous_message = await event.get_reply_message()
+            the_real_message = previous_message.stringify()
+            reply_to_id = event.reply_to_msg_id
+        else:
+            the_real_message = event.stringify()
+            reply_to_id = event.message.id
+        if len(the_real_message) > 4096:
+            with io.BytesIO(str.encode(the_real_message)) as out_file:
+                out_file.name = "message.json"
+                await event.client.send_file(
+                    event.chat_id,
+                    out_file,
+                    force_document=True,
+                    allow_cache=False,
+                    reply_to=reply_to_id
+                )
+                await event.delete()
+        else:
+            await event.edit(f"`{the_real_message}`")
+
 CMD_HELP.update({
     'random': '.random <item1> <item2> ... <itemN>\
 \nUsage: Get a random item from the list of items.'
 })
+
 CMD_HELP.update({
     'sleep': '.sleep <seconds>\
 \nUsage: Userbots get tired too. Let yours snooze for a few seconds.'
 })
+
 CMD_HELP.update({
     "shutdown": ".shutdown\
 \nUsage: Sometimes you need to shut down your bot. Sometimes you just hope to\
 hear Windows XP shutdown sound... but you don't."
 })
+
 CMD_HELP.update({
     'support': ".support\
 \nUsage: If you need help, use this command."
 })
+
 CMD_HELP.update({
     'community': ".community\
 \nUsage: Join the awesome Paperplane userbot community !!"
 })
+
 CMD_HELP.update({
     'repo': '.repo\
 \nUsage: If you are curious what makes the userbot work, this is what you need.'
 })
+
 CMD_HELP.update({
     "readme": ".readme\
 \nUsage: Provide links to setup the userbot and it's modules."
 })
+
 CMD_HELP.update({
     "creator": ".creator\
 \nUsage: Know who created this awesome userbot !!"
 })
+
 CMD_HELP.update({
     "repeat": ".repeat <no.> <text>\
 \nUsage: Repeats the text for a number of times. Don't confuse this with spam tho."
 })
+
 CMD_HELP.update({
     "restart": ".restart\
 \nUsage: Restart the bot !!"
+})
+
+CMD_HELP.update({
+    "json": ".json\
+\nUsage: Get detailed JSON formatted data about replied message"
 })
