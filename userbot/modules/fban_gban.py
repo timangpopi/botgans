@@ -56,7 +56,7 @@ async def gban_all(msg):
         count = 0
         banlist = []
         for i in x:
-            banlist.append(i["chatid"])
+            banlist.append(i.chat_id)
         for banbot in banlist:
             async with bot.conversation(banbot) as conv:
                 if textx:
@@ -119,7 +119,7 @@ async def fedban_all(msg):
         fbanlist = []
         x=(get_fban())
         for i in x:
-            fbanlist.append(i["chatid"])
+            fbanlist.append(i.chat_id)
         for bangroup in fbanlist:
 
             # Send to proof to Spamwatch in case it was spam
