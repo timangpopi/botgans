@@ -11,6 +11,7 @@
 import re
 from sre_constants import error as sre_err
 from userbot import CMD_HELP
+from asyncio import sleep
 from userbot.events import register, errors_handler
 
 DELIMITERS = ("/", ":", "|", "_")
@@ -113,7 +114,9 @@ async def sed(command):
                 await command.edit("B O I! [Learn Regex](https://regexone.com)")
                 return
             if text:
-                await command.edit("Did you mean? \n\n" + text + "")
+                await command.edit(f"Did you mean? \n\n{text}")
+                sleep(2.5)
+                await command.edit(text)
 
 CMD_HELP.update({
     "sed": ".s<delimiter><old word(s)><delimiter><new word(s)>\
