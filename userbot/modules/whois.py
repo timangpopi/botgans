@@ -25,6 +25,8 @@ async def who(event):
         if event.fwd_from:
             return
 
+        await event.edit("`Fetching user info, please wait !!`")
+        
         if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
             os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
 
