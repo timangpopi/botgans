@@ -9,8 +9,10 @@
 
 import os
 
+from telethon.tl.functions.photos import GetUserPhotosRequest
 from telethon.tl.functions.users import GetFullUserRequest
 from telethon.tl.types import MessageEntityMentionName
+from telethon.utils import get_input_location
 from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register, errors_handler
 
@@ -86,9 +88,25 @@ async def get_user(event):
 
 async def fetch_info(replied_user, event):
     """ Get details from the User object. """
+    replied_user_profile_photos = await event.client(GetUserPhotosRequest(
+        user_id=replied_user.user.id,
+        offset=42,
+        max_id=0,
+        limit=80
+    ))
+    replied_user_profile_photos_count = "NaN"
+    try:
+        replied_user_profile_photos_count = replied_user_profile_photos.count
+    except AttributeError as e:
+        pass
     user_id = replied_user.user.id
     first_name = replied_user.user.first_name
     last_name = replied_user.user.last_name
+    try:
+        dc_id, location = get_input_location(replied_user.profile_photo)
+    except Exception as e:
+        dc_id = "Need a Profile Picture to check Dc Id"
+        location = str(e)
     common_chat = replied_user.common_chats_count
     username = replied_user.user.username
     user_bio = replied_user.about
@@ -107,11 +125,13 @@ async def fetch_info(replied_user, event):
     username = "@{}".format(username) if username else (
         "This User has no Username")
     user_bio = "This User has no About" if not user_bio else user_bio
-
+    
     caption = "<b>USER INFO:</b> \n"
     caption += f"First Name: {first_name} \n"
     caption += f"Last Name: {last_name} \n"
     caption += f"Username: {username} \n"
+    caption += f"Dc Id: {dc_id} \n"
+    caption += f"Number of PPs: {replied_user_profile_photos_count} \n"
     caption += f"Is Bot: {is_bot} \n"
     caption += f"Is Restricted: {restricted} \n"
     caption += f"Is Verified by Telegram: {verified} \n"
