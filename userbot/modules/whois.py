@@ -105,7 +105,7 @@ async def fetch_info(replied_user, event):
     try:
         dc_id, location = get_input_location(replied_user.profile_photo)
     except Exception as e:
-        dc_id = "Need a Profile Picture to check Dc Id"
+        dc_id = "Cannot fetch DC ID !!"
         location = str(e)
     common_chat = replied_user.common_chats_count
     username = replied_user.user.username
@@ -126,18 +126,18 @@ async def fetch_info(replied_user, event):
         "This User has no Username")
     user_bio = "This User has no About" if not user_bio else user_bio
     
-    caption = "<b>USER INFO:</b> \n"
-    caption += f"First Name: {first_name} \n"
-    caption += f"Last Name: {last_name} \n"
-    caption += f"Username: {username} \n"
-    caption += f"Dc Id: {dc_id} \n"
-    caption += f"Number of PPs: {replied_user_profile_photos_count} \n"
-    caption += f"Is Bot: {is_bot} \n"
-    caption += f"Is Restricted: {restricted} \n"
-    caption += f"Is Verified by Telegram: {verified} \n"
-    caption += f"ID: <code>{user_id}</code> \n \n"
-    caption += f"Bio: \n<code>{user_bio}</code> \n \n"
-    caption += f"Common Chats with this user: {common_chat} \n"
+    caption = "<b>USER INFO:</b>\n"
+    caption += f"First Name: {first_name}\n"
+    caption += f"Last Name: {last_name}\n"
+    caption += f"Username: {username}\n"
+    caption += f"Data Centre ID: {dc_id}\n"
+    caption += f"Number of Profile Pics: {replied_user_profile_photos_count}\n"
+    caption += f"Is Bot: {is_bot}\n"
+    caption += f"Is Restricted: {restricted}\n"
+    caption += f"Is Verified by Telegram: {verified}\n"
+    caption += f"ID: <code>{user_id}</code>\n\n"
+    caption += f"Bio: \n<code>{user_bio}</code>\n\n"
+    caption += f"Common Chats with this user: {common_chat}\n"
     caption += f"Permanent Link To Profile: "
     caption += f"<a href=\"tg://user?id={user_id}\">{first_name}</a>"
 
