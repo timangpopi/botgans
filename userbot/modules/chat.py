@@ -56,7 +56,7 @@ async def mention(event):
             return
         input_str = event.pattern_match.group(1)
         target, mention_text = input_str.split(' ', 1)
-        replied_user = await get_user(event)
+        replied_user = await get_user(event, target)
         user_id = replied_user.user.id
         caption = """<a href='tg://user?id={}'>{}</a>""".format(
             user_id, str(mention_text))
