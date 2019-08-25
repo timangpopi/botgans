@@ -145,7 +145,7 @@ async def devices_specifications(request):
         reply = ''
         for url in device_page_url:
             info = BeautifulSoup(get(url).content, 'lxml')
-            reply = '\n' + info.title.text.split('-')[0].strip() + '\n\n'
+            reply = '\n**' + info.title.text.split('-')[0].strip() + '**\n\n\n'
             info = info.find('div', {'id': 'model-brief-specifications'})
             specifications = re.findall(r'<b>.*?<br/>', str(info))
             for item in specifications:
